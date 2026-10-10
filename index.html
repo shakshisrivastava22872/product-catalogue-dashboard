@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Catalogue Analytics</title>
+    <meta
+      name="description"
+      content="Modern product catalogue analytics dashboard with KPI insights, catalogue filters, and category charts."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Sidebar navigation">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">PC</div>
+          <div>
+            <p class="brand-kicker">Product Catalogue</p>
+            <h1>Dashboard</h1>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main sections">
+          <a href="#overview" class="nav-link active">Overview</a>
+          <a href="#products" class="nav-link">Products</a>
+          <a href="#analytics" class="nav-link">Analytics</a>
+        </nav>
+
+        <div class="sidebar-footer">Business Insights</div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar" id="overview">
+          <div>
+            <p class="eyebrow">Business overview</p>
+            <h2>Product Catalogue Analytics</h2>
+            <p class="subtitle">
+              Monitor sales health, product availability, and category performance across the full catalogue.
+            </p>
+          </div>
+
+          <div class="topbar-actions">
+            <label class="search-box" for="searchInput">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Search products, categories or IDs"
+                aria-label="Search products"
+              />
+            </label>
+            <button id="resetFilters" class="reset-btn" type="button">Reset filters</button>
+          </div>
+        </header>
+
+        <section class="kpi-grid" aria-label="Key performance indicators">
+          <article class="kpi-card accent" aria-live="polite">
+            <div class="kpi-head">
+              <span class="kpi-icon" aria-hidden="true">📦</span>
+              <span class="kpi-label">Total Products</span>
+            </div>
+            <div class="kpi-value" id="totalProductsValue">0</div>
+            <p class="kpi-note">Visible catalogue items</p>
+          </article>
+
+          <article class="kpi-card" aria-live="polite">
+            <div class="kpi-head">
+              <span class="kpi-icon" aria-hidden="true">₹</span>
+              <span class="kpi-label">Average Product Price</span>
+            </div>
+            <div class="kpi-value" id="averagePriceValue">₹0</div>
+            <p class="kpi-note">Average ticket price</p>
+          </article>
+
+          <article class="kpi-card" aria-live="polite">
+            <div class="kpi-head">
+              <span class="kpi-icon" aria-hidden="true">💰</span>
+              <span class="kpi-label">Total Inventory Value</span>
+            </div>
+            <div class="kpi-value" id="inventoryValue">₹0</div>
+            <p class="kpi-note">Price × stock across all items</p>
+          </article>
+
+          <button
+            id="lowStockKpiFilter"
+            class="kpi-card kpi-card-action warning"
+            type="button"
+            data-stock-filter="low-stock"
+            aria-pressed="false"
+            aria-label="Filter the catalogue to low-stock products"
+          >
+            <div class="kpi-head">
+              <span class="kpi-icon" aria-hidden="true">⚠</span>
+              <span class="kpi-label">Low-Stock Products</span>
+            </div>
+            <div class="kpi-value" id="lowStockValue">0</div>
+            <p class="kpi-note">Click to view products below 10 units</p>
+          </button>
+        </section>
+
+        <section class="insights-panel" aria-label="Summary insights">
+          <div>
+            <p class="eyebrow">Quick insights</p>
+            <h3>Catalogue health</h3>
+          </div>
+          <div class="insight-grid">
+            <div class="insight-box">
+              <span class="insight-label">Top category</span>
+              <strong id="topCategory">—</strong>
+            </div>
+            <button
+              class="insight-box insight-action"
+              type="button"
+              data-stock-filter="out-of-stock"
+              aria-pressed="false"
+              aria-label="Filter the catalogue to out-of-stock products"
+            >
+              <span class="insight-label">Out of stock · click to filter</span>
+              <strong id="outOfStockCount">0</strong>
+            </button>
+            <div class="insight-box">
+              <span class="insight-label">Visible products</span>
+              <strong id="visibleProductsCount">0</strong>
+            </div>
+            <div class="insight-box">
+              <span class="insight-label">Last updated</span>
+              <strong id="lastUpdatedLabel">—</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="catalogue-panel" id="products" aria-labelledby="productsHeading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Catalogue</p>
+              <h3 id="productsHeading">Product inventory</h3>
+            </div>
+            <div class="catalogue-actions">
+              <button id="exportCsv" class="reset-btn export-btn" type="button">Export filtered CSV</button>
+              <span class="results-badge" id="visibleProductCount">0 products</span>
+            </div>
+          </div>
+
+          <div class="filters-wrapper" aria-label="Product filters and sorting">
+            <label>
+              <span>Category</span>
+              <select id="categoryFilter" aria-label="Filter by category">
+                <option value="All Categories">All Categories</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Stock</span>
+              <select id="stockFilter" aria-label="Filter by stock status">
+                <option value="all">All Stock</option>
+                <option value="in-stock">In Stock</option>
+                <option value="low-stock">Low Stock</option>
+                <option value="out-of-stock">Out of Stock</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Sort by</span>
+              <select id="sortSelect" aria-label="Sort products">
+                <option value="name-asc">Product Name</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="stock-asc">Stock: Low to High</option>
+                <option value="rating-desc">Rating: High to Low</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="quick-filters" role="group" aria-label="Quick stock filters">
+            <span class="quick-filters-label">Quick filters</span>
+            <button class="quick-filter-btn" type="button" data-stock-filter="low-stock" aria-pressed="false">
+              Low stock
+            </button>
+            <button class="quick-filter-btn" type="button" data-stock-filter="out-of-stock" aria-pressed="false">
+              Out of stock
+            </button>
+            <span id="exportFeedback" class="export-feedback" role="status" aria-live="polite" hidden></span>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-describedby="productsHeading">
+              <thead>
+                <tr>
+                  <th scope="col">Product ID</th>
+                  <th scope="col">Product Name</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Stock</th>
+                  <th scope="col">Rating</th>
+                  <th scope="col">Stock Status</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state" hidden>
+              <h4>No products match your current filters.</h4>
+              <p>Try adjusting the search keyword, category, stock status, or sorting options.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="analytics-section" id="analytics" aria-labelledby="analyticsHeading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Insights</p>
+              <h3 id="analyticsHeading">Analytics overview</h3>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <article class="chart-card">
+              <div class="chart-header">
+                <h4>Products by Category</h4>
+              </div>
+              <svg id="categoryChart" class="chart-svg" viewBox="0 0 420 260" role="img" aria-label="Products by category chart"></svg>
+            </article>
+
+            <article class="chart-card">
+              <div class="chart-header">
+                <h4>Inventory Value by Category</h4>
+              </div>
+              <svg id="inventoryChart" class="chart-svg" viewBox="0 0 420 260" role="img" aria-label="Inventory value by category chart"></svg>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="productDialog" class="product-dialog" aria-labelledby="dialogProductName">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Product details</p>
+          <h2 id="dialogProductName"></h2>
+        </div>
+        <button id="closeProductDialog" class="dialog-close" type="button" aria-label="Close product details">×</button>
+      </div>
+      <dl class="product-details">
+        <div><dt>Product ID</dt><dd id="dialogProductId"></dd></div>
+        <div><dt>Category</dt><dd id="dialogProductCategory"></dd></div>
+        <div><dt>Price</dt><dd id="dialogProductPrice"></dd></div>
+        <div><dt>Inventory value</dt><dd id="dialogInventoryValue"></dd></div>
+        <div><dt>Stock</dt><dd id="dialogProductStock"></dd></div>
+        <div><dt>Rating</dt><dd id="dialogProductRating"></dd></div>
+        <div><dt>Availability</dt><dd id="dialogProductStatus"></dd></div>
+      </dl>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
